@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Library Dashboard (Modern Design)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- General Reset and Typography --- */
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            background-color: #f0f2f5; /* Light grey background */
+            color: #333;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* --- Navigation Sidebar --- */
+        .sidebar {
+            width: 250px; /* Slightly wider */
+            background-color: #1f2833; /* Deep Slate Blue */
+            color: white;
+            padding: 30px 0;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .sidebar h2 {
+            font-size: 1.5em;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #66fcf1; /* Light Blue/Cyan accent */
+            font-weight: 700;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 15px 30px;
+            text-decoration: none;
+            color: #c5c6c7;
+            font-size: 1.05em;
+            transition: background-color 0.3s, color 0.3s;
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background-color: #38424d;
+            color: #ffffff;
+        }
+
+        .nav-link.active {
+            background-color: #45a29e; /* Accent color for active state */
+            color: #ffffff;
+            border-right: 5px solid #66fcf1;
+            font-weight: 700;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+
+        .section-header {
+            font-size: 2em;
+            font-weight: 700;
+            color: #1f2833;
+            margin-bottom: 30px;
+        }
+
+        /* --- Dashboard Grid (Stat Cards) --- */
+        #dashboard-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .stat-card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card .value {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin: 0;
+            line-height: 1;
+        }
+
+        .stat-card .label {
+            font-size: 1.1em;
+            color: #777;
+            margin-top: 10px;
+        }
+
+        /* Specific colors for cards */
+        #total-books-card .value { color: #45a29e; }
+        #available-books-card .value { color: #66fcf1; }
+        #checked-out-card .value { color: #e74c3c; }
+
+
+        /* --- Form Styling --- */
+        .form-container {
+            padding: 25px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin-bottom: 30px;
+        }
+        
+        .form-header {
+            font-size: 1.5em;
+            color: #1f2833;
+            margin-bottom: 15px;
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr) auto;
+            gap: 15px;
+        }
+
+        .input-grid input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .input-grid input:focus {
+            border-color: #45a29e;
+            outline: none;
+        }
+
+        .add-book-btn {
+            background-color: #45a29e;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.3s;
+        }
+
+        .add-book-btn:hover {
+            background-color: #337a76;
+        }
+
+        /* --- Book List Styling --- */
+        .book-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .book-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 25px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #45a29e;
+        }
+
+        .book-details {
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+
+        .book-title {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: #1f2833;
+        }
+
+        .book-author {
+            color: #777;
+            font-size: 0.95em;
+            margin-top: 4px;
+        }
+
+        /* --- Status and Action Buttons --- */
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .status-button, .remove-button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 400;
+            transition: background-color 0.3s;
+            min-width: 120px;
+            text-align: center;
+        }
+
+        .status-available {
+            background-color: #66fcf1;
+            color: #1f2833;
+        }
+
+        .status-checked-out {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        .remove-button {
+            background-color: #c0392b;
+            color: white;
+        }
+
+        .remove-button:hover {
+            background-color: #a02c21;
+        }
+
+        /* --- View Visibility --- */
+        .view {
+            display: none;
+        }
+        .view.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>📚 LMS Admin</h2>
+        <a class="nav-link active" id="dashboard-nav" data-view="dashboard-view">📊 Dashboard</a>
+        <a class="nav-link" id="list-nav" data-view="list-view">📖 Book Inventory</a>
+    </div>
+
+    <div class="main-content">
+
+        <div id="dashboard-view" class="view active">
+            <h1 class="section-header">📊 Library Overview</h1>
+            <div id="dashboard-stats">
+                </div>
+
+            <div class="form-container">
+                <h2 class="form-header">Quick Action: Add New Book</h2>
+                <form id="book-form-dash" class="input-grid">
+                    <input type="text" id="title-dash" placeholder="Book Title" required>
+                    <input type="text" id="author-dash" placeholder="Author Name" required>
+                    <input type="text" id="isbn-dash" placeholder="ISBN (e.g., 978...)" required>
+                    <button type="submit" class="add-book-btn">Add Book</button>
+                </form>
+            </div>
+        </div>
+
+        <div id="list-view" class="view">
+            <h1 class="section-header">📖 Manage Book Inventory</h1>
+
+            <div class="form-container">
+                <h2 class="form-header">Add New Book</h2>
+                <form id="book-form-list" class="input-grid">
+                    <input type="text" id="title-list" placeholder="Book Title" required>
+                    <input type="text" id="author-list" placeholder="Author Name" required>
+                    <input type="text" id="isbn-list" placeholder="ISBN (e.g., 978...)" required>
+                    <button type="submit" class="add-book-btn">Add Book</button>
+                </form>
+            </div>
+            
+            <h2 class="form-header">Current Inventory List</h2>
+            <ul id="book-list" class="book-list">
+                </ul>
+        </div>
+
+    </div>
+
+    <script>
+        // --- JavaScript Functionality ---
+
+        // DOM Elements
+        const bookListElement = document.getElementById('book-list');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const views = document.querySelectorAll('.view');
+        
+        // Form elements 
+        const formDash = document.getElementById('book-form-dash');
+        const formList = document.getElementById('book-form-list');
+
+
+        let books = JSON.parse(localStorage.getItem('libraryBooks')) || [
+            // Default books for the first load
+            { id: 1, title: "The Martian", author: "Andy Weir", isbn: "9780804139023", available: true },
+            { id: 2, title: "Sapiens: A Brief History of Humankind", author: "Yuval Noah Harari", isbn: "9780062316097", available: false },
+            { id: 3, title: "The Great Gatsby", author: "F. Scott Fitzgerald", isbn: "9780743273565", available: true },
+        ];
+        let nextId = books.length > 0 ? Math.max(...books.map(b => b.id)) + 1 : 1;
+
+        // --- View Navigation ---
+
+        function switchView(viewId) {
+            views.forEach(view => {
+                view.classList.remove('active');
+            });
+            document.getElementById(viewId).classList.add('active');
+
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-view') === viewId) {
+                    link.classList.add('active');
+                }
+            });
+            
+            // Re-render when switching to ensure data is fresh
+            if (viewId === 'dashboard-view') {
+                renderDashboard();
+            } else if (viewId === 'list-view') {
+                renderBooks();
+            }
+        }
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                switchView(link.getAttribute('data-view'));
+            });
+        });
+
+        // --- Dashboard Rendering ---
+
+        function renderDashboard() {
+            const total = books.length;
+            const available = books.filter(b => b.available).length;
+            const checkedOut = total - available;
+
+            const dashboardStatsContainer = document.getElementById('dashboard-stats');
+            dashboardStatsContainer.innerHTML = `
+                <div class="stat-card" id="total-books-card">
+                    <div class="value">${total}</div>
+                    <div class="label">Total Books in Stock</div>
+                </div>
+                <div class="stat-card" id="available-books-card">
+                    <div class="value">${available}</div>
+                    <div class="label">Available for Loan</div>
+                </div>
+                <div class="stat-card" id="checked-out-card">
+                    <div class="value">${checkedOut}</div>
+                    <div class="label">Currently Checked Out</div>
+                </div>
+            `;
+        }
+
+        // --- Book List Rendering ---
+
+        function renderBooks() {
+            bookListElement.innerHTML = ''; // Clear existing list
+
+            if (books.length === 0) {
+                bookListElement.innerHTML = '<p style="text-align: center; color: #777; padding: 20px; border: 1px dashed #ddd; border-radius: 8px;">The library is currently empty. Add your first book above!</p>';
+                return;
+            }
+
+            books.forEach(book => {
+                const li = document.createElement('li');
+                li.className = 'book-item';
+                li.setAttribute('data-id', book.id);
+
+                const detailsDiv = document.createElement('div');
+                detailsDiv.className = 'book-details';
+                detailsDiv.innerHTML = `
+                    <div class="book-title">${book.title}</div>
+                    <div class="book-author">By: ${book.author} | ISBN: ${book.isbn}</div>
+                `;
+                li.appendChild(detailsDiv);
+
+                const actionsDiv = document.createElement('div');
+                actionsDiv.className = 'actions';
+
+                const statusButton = document.createElement('button');
+                statusButton.textContent = book.available ? 'Available' : 'Checked Out';
+                statusButton.title = book.available ? 'Click to Check Out' : 'Click to Return';
+                statusButton.className = 'status-button ' + (book.available ? 'status-available' : 'status-checked-out');
+                statusButton.addEventListener('click', () => toggleStatus(book.id));
+                actionsDiv.appendChild(statusButton);
+
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.className = 'remove-button';
+                removeButton.addEventListener('click', () => removeBook(book.id));
+                actionsDiv.appendChild(removeButton);
+
+                li.appendChild(actionsDiv);
+                bookListElement.appendChild(li);
+            });
+        }
+
+        // --- Data Management and Actions ---
+
+        function saveBooks() {
+            localStorage.setItem('libraryBooks', JSON.stringify(books));
+        }
+        
+        function handleAddBook(formId) {
+            const form = document.getElementById(formId);
+            const suffix = formId.includes('dash') ? '-dash' : '-list';
+            
+            const title = document.getElementById(`title${suffix}`).value;
+            const author = document.getElementById(`author${suffix}`).value;
+            const isbn = document.getElementById(`isbn${suffix}`).value;
+
+            if (!title || !author || !isbn) {
+                alert("Please fill in all fields.");
+                return;
+            }
+            
+            const newBook = {
+                id: nextId++,
+                title: title.trim(),
+                author: author.trim(),
+                isbn: isbn.trim(),
+                available: true
+            };
+
+            if (books.some(b => b.isbn.toLowerCase() === newBook.isbn.toLowerCase())) {
+                alert(`A book with ISBN ${newBook.isbn} already exists.`);
+                return;
+            }
+
+            books.push(newBook);
+            saveBooks();
+            
+            renderDashboard();
+            renderBooks();
+            form.reset();
+            // Optional: Provide visual feedback in the UI instead of an alert
+        }
+
+        function toggleStatus(id) {
+            const bookIndex = books.findIndex(b => b.id === id);
+            if (bookIndex > -1) {
+                books[bookIndex].available = !books[bookIndex].available;
+                saveBooks();
+                renderDashboard();
+                renderBooks();
+            }
+        }
+
+        function removeBook(id) {
+            if (confirm("Are you sure you want to permanently remove this book from the inventory?")) {
+                books = books.filter(book => book.id !== id);
+                saveBooks();
+                renderDashboard();
+                renderBooks();
+            }
+        }
+
+        // --- Event Listeners ---
+
+        formDash.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleAddBook('book-form-dash');
+        });
+        
+        formList.addEventListener('submit', function(e) {
+            e.preventDefault();
+            handleAddBook('book-form-list');
+        });
+
+
+        // Initialize the view on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDashboard();
+            renderBooks();
+            // Start on the dashboard view
+            switchView('dashboard-view');
+        });
+    </script>
+</body>
+</html>
